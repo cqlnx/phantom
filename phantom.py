@@ -18,7 +18,7 @@ APP_CHANGES = """
 - Metadata hardening: file uploads now use generic multipart metadata (no local filename leak)
 - Improved compatibility: supports both legacy and envelope-based message payloads
 """.strip()
-UPDATE_URL = "https://noks.pics/phantom.py"
+UPDATE_URL = "https://raw.githubusercontent.com/cqlnx/phantom/refs/heads/main/phantom.py"
 MOTD_URLS = {
     "fun": "https://www.noks.pics/motd/motdfun.txt",
     "privacy": "https://www.noks.pics/motd/motdprivacy.txt",
@@ -1085,11 +1085,11 @@ def _extract_remote_changes(script_text):
 def _download_update_instructions():
     if platform.system() == "Windows":
         return (
-            "Invoke-WebRequest https://noks.pics/phantom.py -OutFile phantom.py\n"
+            "Invoke-WebRequest https://raw.githubusercontent.com/cqlnx/phantom/refs/heads/main/phantom.py -OutFile phantom.py\n"
             "py -3 phantom.py"
         )
     return (
-        "curl -fsSL https://noks.pics/phantom.py -o phantom.py\n"
+        "curl -fsSL https://raw.githubusercontent.com/cqlnx/phantom/refs/heads/main/phantom.py -o phantom.py\n"
         "python3 phantom.py"
     )
 
