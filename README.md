@@ -211,19 +211,6 @@ If update key pin mismatches, auto-update is blocked until user approval.
 
 ---
 
-## Configuration Notes (Relay)
-
-Key environment variables include:
-
-- `MESSAGE_RETENTION_DAYS`
-- `KE_RETENTION_HOURS`
-- `FILE_RETENTION_HOURS`
-- `MAX_FILE_SIZE_BYTES`
-- `PHANTOM_AUTH_PRIV_B64`
-- `PHANTOM_FILE_ID_KEY_B64` (set this to a stable 32-byte base64 key so file IDs survive restarts)
-
----
-
 ## Limitations
 
 Phantom is a minimal encrypted messenger. It is not:
