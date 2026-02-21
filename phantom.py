@@ -30,6 +30,7 @@ DEFAULT_MOTD_PROFILE = "privacy"
 UPDATE_CHECK_COOLDOWN_SECONDS = 0
 
 def _ensure_deps():
+    # Tiny bootstrap: grab only what we need, then restart clean.
     checks = {
         "cryptography": "cryptography",
         "requests": "requests",
@@ -52,6 +53,7 @@ def _can_import(mod):
         return False
 
 def _install_deps(packages):
+    # Some Linux distros lock system Python; fallback keeps first-run smooth.
     base_cmd = [sys.executable, "-m", "pip", "install", "--quiet", *packages]
     try:
         subprocess.check_call(base_cmd)
@@ -375,6 +377,7 @@ _network_privacy_gate = {"checked": False, "allow_without_tor": False}
 
 def _tor_running():
     try:
+        # Fast probe only; no fancy Tor control-port logic here.
         s = socket.create_connection(("127.0.0.1", 9050), timeout=1)
         s.close()
         return True
@@ -398,6 +401,7 @@ def _network_privacy_preflight():
         border_style="yellow"
     ))
     allow = Confirm.ask("Continue with network actions without Tor?", default=False)
+    # One-time choice per runtime session; keeps prompts from becoming spam.
     _network_privacy_gate["checked"] = True
     _network_privacy_gate["allow_without_tor"] = bool(allow)
     return _network_privacy_gate["allow_without_tor"]
@@ -457,6 +461,7 @@ class Relay:
         nonce = b64u_enc(os.urandom(12))
         body_hash = hashlib.sha256(body).hexdigest()
         msg = "\n".join([method.upper(), path, self.auth_uid, ts, nonce, body_hash]).encode()
+        # Sign exactly what goes on the wire so server-side verification is deterministic.
         sig = Ed25519PrivateKey.from_private_bytes(self.sign_priv).sign(msg)
         return {
             "x-phantom-uid": self.auth_uid,
@@ -606,6 +611,7 @@ class Relay:
         threading.Thread(target=_run, daemon=True).start()
 
     def _poll(self, room_id, on_msg, stop):
+        # Tor mode uses polling on purpose; WS over Tor can be flaky depending on exits/host.
         last = (int(time.time()) // 60 - 1) * 60
         seen = set()
         def _run():
@@ -1079,7 +1085,7 @@ def _extract_remote_changes(script_text):
         return ""
     body = m.group("body")
     lines = [line.strip() for line in body.splitlines() if line.strip()]
-    # Keep prompt compact and predictable.
+    # Keep prompt compact and predictable (nobody wants a wall of release notes mid-chat).
     return "\n".join(lines[:8]).strip()
 
 def _download_update_instructions():
@@ -1116,6 +1122,7 @@ def _verify_or_pin_update_key(force=False):
     pinned = st.get("update_spki_sha256", "")
 
     if not pinned:
+        # First run: trust-on-first-use with explicit consent.
         console.print()
         console.print(Panel(
             "Updater trust (first use)\n\n"
@@ -1617,6 +1624,7 @@ def cmd_chat(peer_uid, priv=None, pub=None, my_uid=None, relay=None, sign_priv=N
     seen = set()
     seen_lock = threading.Lock()
     file_records = []
+    # Session-local file index for /files and /get convenience commands.
 
     def on_msg(payload, include_self=False):
         if stop.is_set():
@@ -2260,6 +2268,7 @@ def _start_notifier(my_uid, my_priv, relay):
                             if is_this_peer:
                                 pass
                             elif currently_in_chat:
+                                # Soft nudge only; no terminal bell jump-scares.
                                 console.print(f"\n  [bold yellow]! new message from {short}[/bold yellow]")
                             else:
                                 console.print(f"\n  [bold yellow]! new message from {short}[/bold yellow]  [dim](press Enter)[/dim]")
