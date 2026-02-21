@@ -1,0 +1,5 @@
+cryptography==42.0.0
+requests==2.32.3
+requests-toolbelt==1.0.0
+websocket-client==1.8.0
+rich==13.8.1
