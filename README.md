@@ -4,7 +4,7 @@ Tiny end-to-end encrypted messaging for the command line.
 
 Project page: **https://noks.pics/phantom**
 
-<img width="400" height="200" alt="phantom-menu" src="https://github.com/user-attachments/assets/2806b8ab-d2ee-4fe9-924d-ea559a6a1990" />
+<img width="600" height="400" alt="phantom-menu" src="https://github.com/user-attachments/assets/2806b8ab-d2ee-4fe9-924d-ea559a6a1990" />
 
 Phantom encrypts messages on your device before they leave.
 The relay stores ciphertext and routing data, but does not decrypt message content.
